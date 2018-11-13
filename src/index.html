@@ -1,0 +1,142 @@
+<html>
+<head>
+  <link href="https://fonts.googleapis.com/css?family=Exo" rel="stylesheet">
+  <link href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"  integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous" rel="stylesheet">
+  <link href="assets/styles/style.css" rel="stylesheet">
+  <link href="assets/styles/modal.css" rel="stylesheet">
+  <script data-id='teravoz' data-key='18472b2298a8dd440d13e02ba6f57076' src='https://cdn.teravoz.com.br/webrtc/v1/teravoz-webrtc.js'></script>
+
+</head>
+<body>
+  <div class="pad">
+    <div class="tools remove">
+      <div class="go-back">
+        <i class="fa fa-chevron-left"></i>
+      </div>
+      <h3>Settings</h3>
+      <div class="form">
+        <select id="input-settings"></select>
+        <select id="output-settings"></select>
+        <button id="apply-settings">Save</button>
+      </div>
+    </div>
+    <div class="login remove">
+      <img class="teravoz-logo" src="assets/teravoz-logo.svg" />
+      <h3> Register SIP Credentials </h3>
+      <div class="form">
+        <input class="input-text" type="text" id="username" placeholder="Username" />
+        <span class="error error-username"></span>
+        <input class="input-text" type="password" id="password" placeholder="Password" />
+        <span class="error error-password"></span>
+        <button id="register">Sign in</button>
+        <div class="remember-check">
+          <span>Remember me</span><input id="remember" type="checkbox" checked="checked" />
+        </div>
+      </div>
+    </div>
+    <div class="dial-pad remove">
+      <div class="info">
+        <span class="contact-number"></span>
+        <span class="network-state">  
+          Network <i class="fas fa-check" id="signal" aria-hidden="true"></i> 
+        </span>
+      </div>
+      <div class="ongoing-call">
+        <div class="call-info">
+          <span class="call-status"> Available </span>
+        </div>
+      </div>
+      <div>
+        <div class="phoneString">
+          <input id="exten" type="text">
+        </div>
+        <div class="digits">
+          <div class="dig pound number-dig" data-digit="1">1</div>
+          <div class="dig number-dig" data-digit="2">2
+            <div class="sub-dig">ABC</div>
+          </div>
+          <div class="dig number-dig" data-digit="3">3
+            <div class="sub-dig">DEF</div>
+          </div>
+          <div class="dig number-dig" data-digit="4">4
+            <div class="sub-dig">GHI</div>
+          </div>
+          <div class="dig number-dig" data-digit="5">5
+            <div class="sub-dig">JKL</div>
+          </div>
+          <div class="dig number-dig" data-digit="6">6
+            <div class="sub-dig">MNO</div>
+          </div>
+          <div class="dig number-dig" data-digit="7">7
+            <div class="sub-dig">PQRS</div>
+          </div>
+          <div class="dig number-dig" data-digit="8">8
+            <div class="sub-dig">TUV</div>
+          </div>
+          <div class="dig number-dig" data-digit="9">9
+            <div class="sub-dig">WXYZ</div>
+          </div>
+          <div class="dig number-dig astrisk" data-digit="*">*</div>
+          <div class="dig number-dig pound" data-digit="0">0</div>
+          <div class="dig number-dig pound" data-digit="#">#</div>
+        </div>
+        <div class="digits">
+          <div class="dig peer action-dig align-icons" id="unregister">
+            <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+          </div>
+          <div class="dig-spacer"></div>
+          <div class="dig settings action-dig align-icons">
+            <i class="fas fa-cog" aria-hidden="true"></i>
+          </div>
+        </div>
+      </div>
+      <div class="call action-dig" id="make-call">
+        <div class="call-change"><i class="fas fa-phone" aria-hidden="true"></i></div>
+      </div>
+      <div class="hangup action-dig invisible" id="hangup">
+        <div class="call-change"><i class="fas fa-phone" aria-hidden="true"></i></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="teravoz-webphone">
+    <div class="streams invisible">
+      <audio id="local" controls autoplay muted="muted"></audio>
+      <audio id="remote" controls autoplay></audio>
+    </div>
+  </div>
+  <!-- <div class="blocked-ui"></div> -->
+  <div class="modal micromodal-slide" id="modal-incoming-call" aria-hidden="true">
+    <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+      <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-incoming-call-title">
+        <header class="modal__header">
+          <h2 class="modal__title" id="modal-incoming-call-title">Receiving a Call</h2>
+          <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
+        </header>
+        <main class="modal__content" id="modal-incoming-call-content">
+          <p id="incoming-call-text"></p>
+        </main>
+        <footer class="modal__footer">
+          <button class="modal__btn modal__btn-accept" data-micromodal-close id="accept-call">Accept</button>
+          <button class="modal__btn modal__btn-decline" data-micromodal-close id="decline-call">Decline</button>
+          <!-- <button class="modal__btn" data-micromodal-close aria-label="Close this dialog window">Close</button> -->
+        </footer>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal micromodal-slide" id="modal-only" aria-hidden="true">
+    <div class="modal__overlay" tabindex="-1" data-micromodal-close></div>
+  </div>
+        
+  <script>
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/micromodal/dist/micromodal.min.js"></script>
+  <script>
+    MicroModal.init();
+  </script>
+  <script src="assets/js/main.js"></script>
+</body>
+
+</html>
