@@ -1,0 +1,301 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background: #ccc;
+  font-family: sans-serif;
+}
+
+.tel-box {
+  position: fixed;
+  display: flex;
+  width: 460px;
+  max-width: 100%;
+  height: 60px;
+  right: 15px;
+  bottom: 15px;
+  flex-direction: row-reverse;
+}
+.tel-box__button {
+  width: 60px;
+  height: 60px;
+  background: #00a7e6;
+  border-radius: 50%;
+  color: #FFF;
+  border: none;
+  box-shadow: 0 3px 8px -2px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  outline: none;
+  font-size: 20px;
+}
+.tel-box--incoming .tel-box__button {
+  animation-name: pulling;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+}
+.tel-box__content {
+  position: relative;
+  flex: 1;
+  background: #FFF;
+  border-radius: calc(60px / 2);
+  margin-right: 15px;
+  visibility: hidden;
+  perspective: 50px;
+  transform: rotateX(90deg);
+  transition: visibility 0s linear 0.3s, transform 0.3s ease-in;
+}
+.tel-box--active .tel-box__content {
+  visibility: visible;
+  transform: rotateX(0deg);
+  transition: transform 0.3s ease-out;
+}
+.tel-box__content input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  max-width: 100%;
+  height: 100%;
+  border: none;
+  padding: 0 150px 0 20px;
+  border-radius: calc(60px / 2);
+  appearence: none;
+  font-size: 22px;
+  outline: none;
+}
+.tel-box__content::after {
+  content: "";
+  position: absolute;
+  right: -8px;
+  top: calc(50% - 10px);
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 10px solid #FFF;
+}
+.tel-box__actions {
+  display: flex;
+  position: absolute;
+  right: 10px;
+  top: 0;
+  height: 60px;
+  align-items: center;
+}
+.tel-box__actions button {
+  color: #666;
+  border: none;
+  height: 40px;
+  width: 40px;
+  margin: 0 2.5px;
+  border-radius: 50%;
+  line-height: 40px;
+  padding: 0 5px;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+}
+.tel-box__actions button:hover {
+  box-shadow: inset 0 0 0 40px rgba(0, 0, 0, 0.1);
+}
+.tel-box__actions button.tel-box__call {
+  background: #63ff85;
+  color: #FFF;
+}
+.tel-box__actions button.tel-box__hangup {
+  background: #c84949;
+  color: #FFF;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+.none {
+  display: none;
+}
+
+.call-box {
+  height: 150px;
+  width: 300px;
+  background: #FFF;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  bottom: 0px;
+  right: 70px;
+  border-radius: calc(60px / 2);
+  overflow: hidden;
+  background: #0076a2f1;
+  color: #FFF;
+  visibility: hidden;
+  perspective: 50px;
+  transform: rotateX(90deg);
+  transition: visibility 0s linear 0.3s, transform 0.3s ease-in;
+}
+.call-box--active {
+  visibility: visible;
+  transform: rotateX(0deg);
+  transition: transform 0.3s ease-out;
+}
+.call-box__actions {
+  width: 100%;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 50%;
+}
+.call-box__info {
+  width: 100%;
+  height: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.call-box__profile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+}
+.call-box__profile i {
+  padding-right: 10px;
+  font-size: 50px;
+  color: #FFF;
+}
+.call-box__info span {
+  font-size: 16px;
+}
+.call-box__actions button {
+  color: #666;
+  border: none;
+  height: 40px;
+  width: 70px;
+  margin: 0 2.5px;
+  line-height: 40px;
+  padding: 0 5px;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+  font-weight: 600;
+  border-radius: 4px;
+}
+.call-box__actions button:hover {
+  box-shadow: inset 0 0 0 40px rgba(0, 0, 0, 0.1);
+}
+.call-box__actions button.call-box__accept {
+  background: #13c339;
+  color: #FFF;
+  margin-right: 10px;
+}
+.call-box__actions button.call-box__decline {
+  background: #c84949;
+  color: #FFF;
+}
+
+#phone-number {
+  margin-right: 5px;
+}
+
+.ongoing-call-box {
+  height: 80px;
+  width: 300px;
+  background: #FFF;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  bottom: 0px;
+  right: 70px;
+  border-radius: calc(60px / 2);
+  overflow: hidden;
+  background: #0076a2f1;
+  color: #FFF;
+  visibility: hidden;
+  perspective: 50px;
+  transform: rotateX(90deg);
+  transition: visibility 0s linear 0.3s, transform 0.3s ease-in;
+}
+.ongoing-call-box--active {
+  visibility: visible;
+  transform: rotateX(0deg);
+  transition: transform 0.3s ease-out;
+}
+.ongoing-call-box__actions {
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 50%;
+}
+.ongoing-call-box__info {
+  width: 100%;
+  height: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.ongoing-call-box__profile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+}
+.ongoing-call-box__profile i {
+  padding-right: 10px;
+  font-size: 50px;
+  color: #FFF;
+}
+.ongoing-call-box__info span {
+  font-size: 16px;
+}
+.ongoing-call-box__actions button {
+  color: #666;
+  border: none;
+  height: 40px;
+  width: 40px;
+  margin: 0 2.5px;
+  border-radius: 50%;
+  line-height: 40px;
+  padding: 0 5px;
+  background: transparent;
+  cursor: pointer;
+  outline: none;
+}
+.ongoing-call-box__actions button:hover {
+  box-shadow: inset 0 0 0 40px rgba(0, 0, 0, 0.1);
+}
+.ongoing-call-box__actions button.ongoing-call-box__hangup {
+  background: #c84949;
+  color: #FFF;
+}
+
+.teravoz-streams {
+  visibility: hidden;
+}
+
+@keyframes pulling {
+  0% {
+    transform: translateY(0);
+  }
+  5% {
+    transform: translateY(-15px);
+  }
+  10% {
+    transform: translateY(0);
+  }
+  15% {
+    transform: translateY(-15px);
+  }
+  20% {
+    transform: translateY(0);
+  }
+}
+
+/*# sourceMappingURL=styles.css.map */

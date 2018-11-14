@@ -4,8 +4,7 @@
   "description": "",
   "main": "webpack.config.js",
   "scripts": {
-    "dev": "webpack-dev-server  --open --hot --inline",
-    "build": "webpack --env.production"
+    "build-css": "sass src/assets/styles/styles.scss  src/assets/styles/styles.css"
   },
   "repository": {
     "type": "git",
@@ -15,9 +14,6 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/teravoz/webphone-sample#readme",
   "devDependencies": {
-    "dotenv-webpack": "^1.5.7",
-    "webpack": "^4.25.1",
-    "webpack-cli": "^3.1.2",
-    "webpack-dev-server": "^3.1.10"
+    "sass": "^1.14.3"
   }
 }

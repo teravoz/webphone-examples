@@ -1,306 +1,298 @@
+const button = document.querySelector('.tel-box__button');
+const box = document.querySelector('.tel-box');
+const phoneNumber = document.getElementById('phone-number');
+const timer = document.getElementById('timer');
+const acceptButton = document.querySelector('.call-box__accept');
+const declineButton = document.querySelector('.call-box__decline');
+const callButton = document.querySelector('.tel-box__call');
+const hangupButton = document.querySelector('.tel-box__hangup');
+const exten = document.getElementById('exten');
+const actionButton = document.querySelector('.fa-phone');
+const callBox = document.querySelector('.call-box');
+const ongoingcallBox = document.querySelector('.ongoing-call-box');
+const hangupButtonOngoing = document.querySelector('.ongoing-call-box__hangup');
 
 
-$(document).ready(function (e) {
-  renderAudioDevices();
-  defaults();
+const microphone = document.querySelector('.microphone');
+const microphoneIcon = document.getElementById('microphone-control');
 
-  let webRTCHandler = {};
-  let ongoingElaspsedTime = null;
+const volumeIcon = document.getElementById('audio-control');
+const volume = document.querySelector('.audio-mute');
 
-  Teravoz.start({
-    debug: true,
-    gatewayCallbacks: {
-      success: () => {
-        // generic success cb
+class Webphone {
+
+  constructor() {
+    this.teravoz = {};
+
+    this.incomingInterval = null;
+    this.ongoingTime = null;
+    this.muted = false;
+
+    this.setGatewayCallbacks();
+    this.setWebRTCCallbacks();
+    this.setStreams();
+  }
+
+  setGatewayCallbacks() {
+    const gatewayCallbacks = {
+      success: function () {
+
       },
-      error: (err) => {
-        // generic error cb
+      error: function (error) {
+
       },
-      closed: () => {
-        // application ended
+      closed: function () {
+
       },
-      networkState: (obj) => {
-        // Networking state
-        if (obj.state == 'online') {
-          $('#signal').addClass('fa-check');
-          $('#signal').removeClass('fa-times');
-        } else {
-          $('#signal').removeClass('fa-check');
-          $('#signal').addClass('fa-times');
-        }
+      networkState: function () {
+
       }
-    },
-    webRTCCallbacks: {
-      success: (handler) => {
-        webRTCHandler = handler;
-        const peer = window.localStorage.getItem('peer');
-        const { username, password } = peer && JSON.parse(peer) || {};
-        if (username && password) {
-          webRTCHandler.register({ username, password });
-        } else {
-          $('.login').removeClass('remove');
-        }
-        $('#make-call').click(makeCall);
-        $('#hangup').click(hangup);
-        $('#register').click(register);
-        $('#unregister').click(unregister);
-      },
-      error: (err) => {
-        // We may use dialogs for displaying errors
-      },
-      registrationFailed: () => {
-        // Failed to register sip account
-        alert('registration failed')
-      },
-      registering: () => {
-        // We may implement a loader
-      },
-      registered: () => {
-        // sip account logged in
-        const peer = window.localStorage.getItem('peer');
-        const { username } = peer && JSON.parse(peer) || {};
-        $('.contact-number').text(`Registered as peer ${username}`);
-        if ($('.dial-pad').hasClass('remove')) {
-          $('.login').addClass('remove');
-          $('.dial-pad').removeClass('remove');
-        }
-      },
-      calling: () => {
-        // We may do something when the destination is ringing
-        $('.call-status').html(`Calling ${$('#exten').val()}...`);
-        MicroModal.show('modal-only');
-      },
-      incomingCall: (obj) => {
-        // Receiving a call...
-        // accept or decline...
-        ongoingCallWith = obj.from;
-        $('#incoming-call-text').html(`Incoming call from ${obj.from}`);
-        $('#accept-call').click(function(e) {
-          obj.actions.accept();
-          $('.call-status').html(`Ongoing call with ${obj.from}`);
-        })
-        $('#decline-call').click(function(e) {
-          obj.actions.decline();
+    };
+
+    this.gatewayCallbacks = gatewayCallbacks;
+  }
+
+  setStreams() {
+    this.streams = {
+      localStream: document.getElementById('local'),
+      remoteStream: document.getElementById('remote')
+    };
+  }
+
+  setWebRTCCallbacks() {
+    var self = this;
+    const webRTCCallbacks = {
+      success: function (instance) {
+        self.teravoz = instance;
+
+        // login with peer...
+        self.teravoz.register({ username: '', password: '' });
+
+        // registering the button callbacks
+        callButton.addEventListener('click', (e) => self.call());
+        hangupButton.addEventListener('click', (e) => self.hangup());
+        hangupButtonOngoing.addEventListener('click', (e) => self.hangup());
+        exten.addEventListener('keyup', self.validateInput.bind(self));
+        exten.addEventListener('keydown', self.validateInput.bind(self));
+        microphone.addEventListener('click', (e) => {
+          if (this.muted) {
+            self.teravoz.unmute();
+            this.muted = false;
+            microphoneIcon.classList.remove('fa-microphone-slash');
+            microphoneIcon.classList.add('fa-microphone');
+            return;
+          }
+          microphoneIcon.classList.remove('fa-microphone');
+          microphoneIcon.classList.add('fa-microphone-slash');
+          self.teravoz.mute();
+          this.muted = true;
         });
-        MicroModal.show('modal-incoming-call');
       },
-      earlyMedia: () => {
-        // We are receiving the carrier early media...
+      error: function (error) {
+
       },
-      acceptedCall: () => {
-        // Once the call is accepted...
-        $('.call-status').html(`Ongoing call with ${$('#exten').val()}`);
-        $('.call-info').append('<span class="call-status-timer"></span>');
+      registering: function () {
+
+      },
+      registered: function () {
+        button.removeAttribute('disabled');
+      },
+      registrationFailed: function () {
+
+      },
+      calling: function () {
+
+      },
+      incomingCall: function ({ theirNumber, actions }) {
+        self.incomingInterval = setInterval(() =>
+          box.classList.toggle('tel-box--incoming'),
+          1000);
+
+        callBox.classList.toggle('call-box--active');
+        button.toggleAttribute('disabled');
+
+        // Adding the number to screen
+        phoneNumber.innerHTML = '' + theirNumber;
+
+        // Adding click to actions 
+        acceptButton.addEventListener('click', (e) => {
+          callBox.classList.toggle('call-box--active');
+          ongoingcallBox.classList.toggle('ongoing-call-box--active');
+          actions.accept();
+        });
+
+        declineButton.addEventListener('click', (e) => {
+          callBox.classList.toggle('call-box--active');
+          actions.decline();
+        });
+      },
+      earlyMedia: function () {
+
+      },
+      acceptedCall: function (som) {
         let elapsedTime = 0;
-        
-        ongoingElaspsedTime = setInterval(() => {
+        self.ongoingTime = setInterval(() => {
           elapsedTime++;
-          const time = getElapsedTime(elapsedTime)
-          $('.call-status-timer').html(time);
+          const time = self.getElapsedTime(elapsedTime);
+          timer.innerText = time;
         }, 1000);
 
-        $('#hangup').removeClass('invisible');
-        $('#make-call').addClass('invisible');
-      },
-      hangingUp: () => {
-        // Hanging up the call
-      },
-      hangup: () => {
-        // Got a hangup event from any side
-        if (ongoingElaspsedTime) {
-          clearInterval(ongoingElaspsedTime);
-          $('.call-status-timer').remove();
-          $('.call-status').html('Available');
+        if (self.incomingInterval) {
+          clearInterval(self.incomingInterval);
+          box.classList.toggle('tel-box--incoming')
         }
-        $('#make-call').removeAttr('disabled').click(makeCall);
-        $('#hangup').addClass('invisible');
-        $('#make-call').removeClass('invisible');
-        $('#exten').val('');
-        defaults();
       },
-      webRTCState: () => {
-        // Checking WebRTC state.
+      missedCall: function () {
+
       },
-      blockingEvent: (block) => {
-        // Received blocking event such as microphone usage permission popup.
+      hangingUp: function () {
+
       },
-      isReceivingMedia: () => {
-        // We are receiving the audio
-        MicroModal.close('modal-only');
+      hangup: function () {
+        if (self.incomingInterval) {
+          clearInterval(self.incomingInterval);
+          box.classList.toggle('tel-box--incoming')
+        }
+
+        if (callBox.classList.contains('call-box--active')) {
+          callBox.classList.toggle('call-box--active');
+        }
+
+        if (ongoingcallBox.classList.contains('ongoing-call-box--active')) {
+          ongoingcallBox.classList.toggle('ongoing-call-box--active');
+        }
+
+        button.toggleAttribute('disabled');
+        timer.innerText = "";
+
+        // Removing the listeners
+        // acceptButton.removeEventListener('click', () => { });
+        // declineButton.removeEventListener('click', () => { });
+
+        if (callButton.classList.contains('none')) {
+          callButton.classList.remove('none');
+          hangupButton.classList.add('none');
+        }
       },
-      DTMF: (obj) => {
-        // The call is already going on, so that the DTMF is active
-        // Once you click on the numbers
-        $('.number-dig').click(function (e) {
-          const tone = $(this).data().digit;
-          console.log(tone);
-          if (tone) {
-            obj.sendTones(tone);
+      webRTCState: function () {
+
+      },
+      DTMF: function (payload) {
+        exten.addEventListener('keydown', (e) => {
+          if (!self.validateInput(e)) {
+            return;
           }
+          payload.sendTones(e.key);
         });
-
-        // Notice that exten is the input, so that we want to
-        // trigger the keyboard event on dtmf
-        $('#exten').on('keydown keyup', dialpadInputDtmf(obj));
       },
-      cleanup: () => {
-        // Ended calls get cleanups
+      isReceivingMedia: function () {
+
       },
-    }
-  }, { // Provide the html stream elements
-    localStream: $('#local').get(0),
-    remoteStream: $('#remote').get(0)
-  });
+      cleanup: function () {
+        if (self.incomingInterval) {
+          clearInterval(self.incomingInterval);
+        }
+        if (self.ongoingTime) {
+          clearInterval(self.ongoingTime);
+        }
 
-  function register() {
-    const username = $('#username').val();
-    const password = $('#password').val();
-    const remember = $('#remember')[0].checked;
-    if (remember) {
-      window.localStorage.setItem('peer', JSON.stringify({ username, password }));
-    }
-    $('.error-username').addClass('hidden');
-    $('.error-password').addClass('hidden');
-    if (!username || username.length == 1) {
-      $('.error-username').removeClass('hidden').html('The username is required');
-      return;
-    }
-    if (!password || password.length == 1) {
-      $('.error-password').removeClass('hidden').html('The password is required');
-      return;
-    }
-    $(this).attr('disabled', false);
+        timer.innerText = "";
+      },
+    };
 
-    webRTCHandler.register({ username, password });
+    this.webRTCCallbacks = webRTCCallbacks;
   }
 
-  function unregister() {
-    webRTCHandler.unregister();
-    window.localStorage.removeItem('peer');
+  call() {
+    if (exten.value) {
+      this.teravoz.dial({
+        numberTo: exten.value,
+        error: (error) => {
+          if (callButton.classList.contains('none')) {
+            callButton.classList.remove('none');
+            hangupButton.classList.add('none');
+          }
+        }
+      });
 
-    $('.dial-pad').addClass('remove');
-    $('.login').removeClass('remove');
-  }
-
-  function makeCall() {
-    $('#hangup').removeClass('invisible');
-    $(this).addClass('invisible');
-    webRTCHandler.dial({ 
-      numberTo: $('#exten').val(),
-      error: () => {
-        $('#hangup').addClass('invisible');
-        $(this).removeClass('invisible');
+      if (hangupButton.classList.contains('none')) {
+        callButton.classList.add('none');
+        hangupButton.classList.remove('none');
       }
-    });
-  }
-
-  function hangup() {
-    if (ongoingElaspsedTime) {
-      clearInterval(ongoingElaspsedTime);
     }
-    $('.call-status').html('Available');
-    $('.call-status-timer').remove();
-    $('#make-call').removeClass('invisible').attr('disabled', true).unbind('click');
-    $('#hangup').addClass('invisible');
-    webRTCHandler.hangup();
   }
 
+  hangup() {
+    this.teravoz.hangup();
+    if (callButton.classList.contains('none')) {
+      callButton.classList.remove('none');
+      hangupButton.classList.add('none');
+    }
 
-  function isDialpadValidChar(code, shifting) {
-    if (shifting) {
-      if (code == 51 || code == 56) {
-        return true;
-      }
+    if (ongoingcallBox.classList.contains('ongoing-call-box--active')) {
+      ongoingcallBox.classList.toggle('ongoing-call-box--active');
+    }
+  }
+
+  validateInput(e) {
+    const valid = this.isDialpadValidChar(e.key);
+    if (!valid) {
+      e.preventDefault();
       return false;
     }
 
-    return code == 35 || code == 42 || (code >= 48 && code <= 57);
+    return true;
   }
 
-  function dialpadInputDtmf(dtmf) {
-    return function (e) {
-      let shifting = e.shiftKey;
-      if (isDialpadValidChar(e.charCode, shifting)) {
-        dtmf.sendTones(String.fromCharCode(e.charCode));
-      }
+  isDialpadValidChar(key) {
+
+    switch(key) {
+      case '#':
+      case '*':
+      case '0':
+      case '1':
+      case '2':
+      case '3':
+      case '4':
+      case '5':
+      case '6':
+      case '7':
+      case '8':
+      case '9':
+      case '0':
+      case 'Backspace':
+        return true;
     }
   }
 
-  function dialInputDefault(e) {
-    let shifting = e.shiftKey;
-    if (e.keyCode != 8 && !isDialpadValidChar(e.keyCode, shifting)) {
-      e.preventDefault();
-    }
+  addPadding(num) {
+    return (num < 10 ? '0' : '') + num;
   }
 
-  function defaults() {
-    // Allow only the dialpad values.
-    $('#exten').on('keydown keyup', dialInputDefault);
+  getElapsedTime(secs) {
+    const hours = Math.floor(secs / 3600);
+    secs = secs % 3600;
+    const minutes = Math.floor(secs / 60);
+    secs = secs % 60;
+    const seconds = Math.floor(secs);
 
-    $('.go-back').click(function () {
-      $('.tools').addClass('remove');
-      $('.login').addClass('remove');
-      $('.dial-pad').removeClass('remove');
-    });
-    $('.settings').click(function () {
-      $('.login').addClass('remove');
-      $('.dial-pad').addClass('remove');
-      $('.tools').removeClass('remove');
-    });
+    const currentTimeString = this.addPadding(hours) + ":" + this.addPadding(minutes) + ":" + this.addPadding(seconds);
 
-    $('.peer').click(function () {
-      unregister()
-    });
-
-    $('.number-dig').click(function (e) {
-      let exten = $('#exten').val();
-      let digit = $(this).data().digit;
-      let newValue = exten + digit;
-      $('#exten').focus();
-      if (!isDialpadValidChar(digit.toString().charCodeAt(0)), e.shiftKey) {
-        e.preventDefault();
-        return;
-      }
-      $('#exten').val(newValue);
-    });
+    return currentTimeString;
   }
+}
+
+
+window.addEventListener('load', (e) => {
+
+  button.addEventListener('click', () => {
+    box.classList.toggle('tel-box--active');
+  });
+
+
+  const webphone = new Webphone();
+  Teravoz.start({
+    gatewayCallbacks: webphone.gatewayCallbacks,
+    webRTCCallbacks: webphone.webRTCCallbacks
+  }, webphone.streams);
 });
-
-function renderAudioDevices() {
-  Teravoz.getAudioDevices().then(function ({ input, output }) {
-    for (let i = 0; i < input.length; i++) {
-      const option = document.createElement('option');
-      option.value = input[i].deviceId;
-      option.text = input[i].label || `Microphone ${i + 1}`;
-      option.selected = input[i].deviceId == 'default';
-      $('#input-settings').append(option);
-    }
-    for (let i = 0; i < output.length; i++) {
-      const option = document.createElement('option');
-      option.value = output[i].deviceId;
-      option.text = output[i].label || `Sound ${i + 1}`;
-      option.selected = output[i].deviceId == 'default';
-      $('#output-settings').append(option);
-    }
-  }).catch(function (error) {
-    alert('Error: ' + error.message);
-  })
-}
-
-function addPadding(num) {
-  return (num < 10 ? '0' : '') + num;
-}
-
-function getElapsedTime(secs) {
-  const hours = Math.floor(secs / 3600);
-  secs = secs % 3600;
-  const minutes = Math.floor(secs / 60);
-  secs = secs % 60;
-  const seconds = Math.floor(secs);
-
-  const currentTimeString = addPadding(hours) + ":" + addPadding(minutes) + ":" + addPadding(seconds);
-
-  return currentTimeString;
-}
-
-
