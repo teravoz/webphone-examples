@@ -9,13 +9,16 @@ The source code can be found at examples/ path.
 ### floating-phone
 
 It implements the UI of a webphone that can be dragged around the window. This example
-stands for a dynamic and flexible webphone in your screen. It may be embedded in a CRM.
+stands for a dynamic and flexible webphone on your screen. It may be embedded in a CRM.
 
   * How to run ?
 
     - Open the examples/floating-phone/index.html file
+
     - Place your API-KEY **(check the Teravoz docs) on the embed script
+
     - Go to examples/floating-phone/assets/js/main.js line 69
+
     - Insert your peer credentials
     
     - Execute the following commands in the bash:
@@ -36,7 +39,9 @@ stands for a more complex way to build an UI using the WebRTC Teravoz Library.
   * How to run ?
 
     - Open the examples/floating-phone/index.html file
-    - Place your API-KEY **(check the Teravoz docs) on the embed script
+
+    - Place your API-KEY [(Teravoz API Documentation)](https://developers.teravoz.com.br/#webrtc) on the embed script
+
     - Execute the following commands in the bash:
 
     ```shell
