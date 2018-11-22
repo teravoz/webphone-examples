@@ -8,7 +8,6 @@ $(document).ready(function (e) {
   let ongoingElaspsedTime = null;
 
   Teravoz.start({
-    debug: true,
     gatewayCallbacks: {
       success: () => {
         // generic success cb
@@ -133,7 +132,6 @@ $(document).ready(function (e) {
         // Once you click on the numbers
         $('.number-dig').click(function (e) {
           const tone = $(this).data().digit;
-          console.log(tone);
           if (tone) {
             obj.sendTones(tone);
           }
@@ -143,9 +141,7 @@ $(document).ready(function (e) {
         // trigger the keyboard event on dtmf
         $('#exten').keyup(function(e) {
           let shifting = e.shiftKey;
-          console.log('got right here', e);
           if (isDialpadValidChar(e.charCode, shifting)) {
-            console.log('>>>>>>>>');
             obj.sendTones(String.fromCharCode(e.charCode));
           }
         });
@@ -227,9 +223,7 @@ $(document).ready(function (e) {
   function dialpadInputDtmf(dtmf) {
     return function (e) {
       let shifting = e.shiftKey;
-      console.log('got right here', e);
       if (isDialpadValidChar(e.charCode, shifting)) {
-        console.log('>>>>>>>>');
         dtmf.sendTones(String.fromCharCode(e.charCode));
       }
     }
