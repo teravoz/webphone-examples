@@ -46,7 +46,7 @@ stands for a more complex way to build an UI using the WebRTC Teravoz Library.
 
   * How to run ?
 
-    - Open the examples/floating-phone/index.html file
+    - Open the examples/using-dialpad/index.html file
 
     - Place your API-KEY [(Teravoz API Documentation)](https://developers.teravoz.com.br/#webrtc) on the embed script
 
