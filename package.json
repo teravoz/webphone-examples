@@ -4,7 +4,8 @@
   "description": "",
   "main": "webpack.config.js",
   "scripts": {
-    "build-css": "sass src/assets/styles/styles.scss  src/assets/styles/styles.css"
+    "build-css": "sass examples/floating-phone/assets/styles/styles.scss  examples/floating-phone/assets/styles/styles.css",
+    "examples": "serve --port 3070 --single examples"
   },
   "repository": {
     "type": "git",
@@ -14,6 +15,7 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/teravoz/webphone-sample#readme",
   "devDependencies": {
-    "sass": "^1.14.3"
+    "sass": "^1.14.3",
+    "serve": "^6.5.0"
   }
 }

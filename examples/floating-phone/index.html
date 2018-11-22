@@ -3,22 +3,19 @@
   <link href="https://fonts.googleapis.com/css?family=Exo" rel="stylesheet">
   <link href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"  integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous" rel="stylesheet">
   <link href="assets/styles/styles.css" rel="stylesheet">
-  <script data-id='teravoz' data-key='18472b2298a8dd440d13e02ba6f57076' src='https://cdn.teravoz.com.br/webrtc/v1/teravoz-webrtc.js'></script>
+  <!-- Check the teravoz docs in order to generate the data-key -->
+  <script data-id='teravoz' data-key='12345' src='https://cdn.teravoz.com.br/webrtc/v1/teravoz-webrtc.js'></script>
 
 </head>
 <body>
-  <div class="tel-box">
+  <div class="tel-box draggable">
     <button disabled class="tel-box__button">
       <b>T</b>
     </button>
     <div class="tel-box__content">
       <div class="tel-box__tools">
         <input id="exten" type="text" placeholder="01199999999">
-        <div class="tel-box__actions">
-          <button class="audio-mute">
-            <i id="audio-control" class="fas fa-volume-mute"></i>
-          </button>
-          
+        <div class="tel-box__actions">         
           <button class="microphone">
             <i id="microphone-control" class="fas fa-microphone"></i>
           </button>
@@ -72,7 +69,9 @@
     <audio id="local" controls autoplay muted="muted"></audio>
     <audio id="remote" controls autoplay></audio>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/interactjs@1.3/dist/interact.min.js"></script>
   <script src="assets/js/main.js"></script>
+  <script src="assets/js/drag-drop.js"></script>
 </body>
 
 </html>

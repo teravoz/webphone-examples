@@ -66,7 +66,7 @@ class Webphone {
         self.teravoz = instance;
 
         // login with peer...
-        self.teravoz.register({ username: '', password: '' });
+        self.teravoz.register({ username: 'YOUR-LOGIN', password: 'YOUR-PASSWORD' });
 
         // registering the button callbacks
         callButton.addEventListener('click', (e) => self.call());
@@ -164,10 +164,6 @@ class Webphone {
 
         button.toggleAttribute('disabled');
         timer.innerText = "";
-
-        // Removing the listeners
-        // acceptButton.removeEventListener('click', () => { });
-        // declineButton.removeEventListener('click', () => { });
 
         if (callButton.classList.contains('none')) {
           callButton.classList.remove('none');

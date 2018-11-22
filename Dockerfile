@@ -5,9 +5,10 @@ RUN apk update && \
 
 RUN npm install -g serve@6.5.0
 
-WORKDIR /usr/bin/webphone-sample/
+WORKDIR /usr/bin/webphone-examples/
+COPY . .
 
-EXPOSE 3069
+EXPOSE 3068
 
 # Serve app
-CMD ["serve", "--local", "--port", "3069", "--single", "."]
+CMD ["serve", "--local", "--port", "3068", "--single", "examples"]
