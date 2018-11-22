@@ -3,7 +3,7 @@ FROM node:8-alpine AS release
 RUN apk update && \
     apk upgrade
 
-RUN npm install -g serve@6.5.0
+RUN npm install -g http-server
 
 WORKDIR /usr/bin/webphone-examples/
 COPY . .
@@ -11,4 +11,4 @@ COPY . .
 EXPOSE 3068
 
 # Serve app
-CMD ["serve", "--local", "--port", "3068", "--single", "examples"]
+CMD ["http-server", "-p", "3068", "-s", "-c", "0", "examples"]

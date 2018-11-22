@@ -20,8 +20,16 @@ stands for a dynamic and flexible webphone on your screen. It may be embedded in
     - Go to examples/floating-phone/assets/js/main.js line 69
 
     - Insert your peer credentials
-    
+
     - Execute the following commands in the bash:
+
+    ```shell
+      npm install 
+
+      npm run examples
+    ```
+  
+    - Using Docker: Execute the following commands in the bash:
 
     ```shell
       docker build . -t webphone-examples
@@ -43,6 +51,14 @@ stands for a more complex way to build an UI using the WebRTC Teravoz Library.
     - Place your API-KEY [(Teravoz API Documentation)](https://developers.teravoz.com.br/#webrtc) on the embed script
 
     - Execute the following commands in the bash:
+
+    ```shell
+      npm install 
+
+      npm run examples
+    ```
+
+    - Using Docker: Execute the following commands in the bash:
 
     ```shell
       docker build . -t webphone-examples
