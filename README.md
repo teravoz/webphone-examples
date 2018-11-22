@@ -1,6 +1,8 @@
 # webphone-examples
 
-This repository contains two examples using the Teravoz WebRTC library. The source code can be found at examples/ path.
+This repository contains two examples using the Teravoz WebRTC library. 
+
+The source code can be found at examples/ path.
 
 ## Examples
 
