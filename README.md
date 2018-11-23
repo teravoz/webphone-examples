@@ -15,7 +15,7 @@ stands for a dynamic and flexible webphone on your screen. It may be embedded in
 
     - Open the examples/floating-phone/index.html file
 
-    - Place your API-KEY **(check the Teravoz docs) on the embed script
+    - Place your API-KEY [(Teravoz API Documentation)](https://developers.teravoz.com.br/#webrtc) on the embed script
 
     - Go to examples/floating-phone/assets/js/main.js line 69
 
