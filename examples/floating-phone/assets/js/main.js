@@ -66,7 +66,7 @@ class Webphone {
         self.teravoz = instance;
 
         // login with peer...
-        self.teravoz.register({ username: 'YOUR-LOGIN', password: 'YOUR-PASSWORD' });
+        self.teravoz.register({ username: 'USERNAME', password: 'PASSWORD' });
 
         // registering the button callbacks
         callButton.addEventListener('click', (e) => self.call());
