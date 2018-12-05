@@ -40,12 +40,6 @@ class Webphone {
       },
       error: function (error) {
 
-      },
-      closed: function () {
-
-      },
-      networkState: function () {
-
       }
     };
 
@@ -66,7 +60,7 @@ class Webphone {
         self.teravoz = instance;
 
         // login with peer...
-        self.teravoz.register({ username: 'USERNAME', password: 'PASSWORD' });
+        self.teravoz.register('USERNAME', 'PASSWORD');
 
         // registering the button callbacks
         callButton.addEventListener('click', (e) => self.call());
@@ -103,7 +97,7 @@ class Webphone {
       calling: function () {
 
       },
-      incomingCall: function ({ theirNumber, actions }) {
+      incomingCall: function (theirNumber, actions) {
         self.incomingInterval = setInterval(() =>
           box.classList.toggle('tel-box--incoming'),
           1000);
@@ -126,10 +120,10 @@ class Webphone {
           actions.decline();
         });
       },
-      earlyMedia: function () {
+      earlyMedia: function (theirNumber) {
 
       },
-      acceptedCall: function (som) {
+      acceptedCall: function (theirNumber) {
         let elapsedTime = 0;
         self.ongoingTime = setInterval(() => {
           elapsedTime++;
@@ -142,13 +136,13 @@ class Webphone {
           box.classList.toggle('tel-box--incoming')
         }
       },
-      missedCall: function () {
+      missedCall: function (theirNumber) {
 
       },
       hangingUp: function () {
 
       },
-      hangup: function () {
+      hangUp: function () {
         if (self.incomingInterval) {
           clearInterval(self.incomingInterval);
           box.classList.toggle('tel-box--incoming')
@@ -173,18 +167,22 @@ class Webphone {
       webRTCState: function () {
 
       },
-      DTMF: function (payload) {
+      DTMF: function () {
         exten.addEventListener('keydown', (e) => {
           if (!self.validateInput(e)) {
             return;
           }
-          payload.sendTones(e.key);
+          this.teravoz.on('sendDTMFSuccess', () => console.log('dialSuccess'));
+          this.teravoz.on('sendDTMFError', (reason) => {
+            console.log(reason);
+          });
+          this.teravoz.sendDTMF(e.key);
         });
       },
       isReceivingMedia: function () {
 
       },
-      cleanup: function () {
+      cleanUp: function () {
         if (self.incomingInterval) {
           clearInterval(self.incomingInterval);
         }
@@ -201,15 +199,14 @@ class Webphone {
 
   call() {
     if (exten.value) {
-      this.teravoz.dial({
-        numberTo: exten.value,
-        error: (error) => {
-          if (callButton.classList.contains('none')) {
-            callButton.classList.remove('none');
-            hangupButton.classList.add('none');
-          }
+      this.teravoz.on('dialSuccess', () => console.log('dialSuccess'));
+      this.teravoz.on('dialError', (reason) => {
+        if (callButton.classList.contains('none')) {
+          callButton.classList.remove('none');
+          hangupButton.classList.add('none');
         }
       });
+      this.teravoz.dial(exten.value);
 
       if (hangupButton.classList.contains('none')) {
         callButton.classList.add('none');
@@ -219,7 +216,7 @@ class Webphone {
   }
 
   hangup() {
-    this.teravoz.hangup();
+    this.teravoz.hangUp();
     if (callButton.classList.contains('none')) {
       callButton.classList.remove('none');
       hangupButton.classList.add('none');
