@@ -192,7 +192,8 @@ $(document).ready(function (e) {
       error: (err) => console.error(`Error: Dial to ${$('#exten').val()}: ${err}`),
     }
 
-    const generatedCallId = uuidv4();
+    // It has to be a string
+    const generatedCallId = `${Date.now()}`;
 
     /* You can pass a client side generated call ID to the dial method
      * as an optional third parameter. This parameter will be used as a code in Teravoz 
