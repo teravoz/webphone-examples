@@ -72,11 +72,16 @@ $(document).ready(function (e) {
       earlyMedia: (theirNumber) => {
         // We are receiving the carrier early media...
       },
-      acceptedCall: (theirNumber) => {
+      acceptedCall: (theirNumber, payload) => {
         // Once the call is accepted...
         $('.call-status').html(`Ongoing call with ${$('#exten').val()}`);
         $('.call-info').append('<span class="call-status-timer"></span>');
         let elapsedTime = 0;
+
+        /* If you had provided a callId on the dial event, 
+         * then the same callId will be returned as a property of the second parameter
+         * of this function. Otherwise, it will still be present, but as a random callId, also generated on dial */
+        console.log(`[${payload.callId}] Call accepted`);
         
         ongoingElaspsedTime = setInterval(() => {
           elapsedTime++;
@@ -87,10 +92,11 @@ $(document).ready(function (e) {
         $('#hangup').removeClass('invisible');
         $('#make-call').addClass('invisible');
       },
-      hangingUp: () => {
+      hangingUp: (payload) => {
         // Hanging up the call
+        console.log(`[${payload.callId}] Hanging up...`)
       },
-      hangUp: () => {
+      hangUp: (payload) => {
         // Got a hangup event from any side
         if (ongoingElaspsedTime) {
           clearInterval(ongoingElaspsedTime);
@@ -101,6 +107,8 @@ $(document).ready(function (e) {
         $('#hangup').addClass('invisible');
         $('#make-call').removeClass('invisible');
         $('#exten').val('');
+
+        console.log(`[${payload.callId}] Hangup up`)
         defaults();
       },
       webRTCState: () => {
@@ -178,7 +186,22 @@ $(document).ready(function (e) {
     webRTCHandler.on('sendDTMFError', (reason) => {
       console.log(reason);
     });
-    webRTCHandler.dial($('#exten').val());
+
+    const callbacks = {
+      success: () => console.log(`SUCCESS: Dial to ${$('#exten').val()}`),
+      error: (err) => console.error(`Error: Dial to ${$('#exten').val()}: ${err}`),
+    }
+
+    const generatedCallId = uuidv4();
+
+    /* You can pass a client side generated call ID to the dial method
+     * as an optional third parameter. This parameter will be used as a code in Teravoz 
+     * webhook events, so you can use this code to identify the call.
+     * 
+     * If the call ID isn't manual provided, then it will be generated automatically and will also
+     * be used in the webhook events as code.
+     */
+    webRTCHandler.dial($('#exten').val(), callbacks, generatedCallId);
   }
 
   function hangup() {
