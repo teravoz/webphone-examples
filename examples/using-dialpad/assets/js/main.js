@@ -199,8 +199,8 @@ $(document).ready(function (e) {
      * as an optional third parameter. This parameter will be used as a code in Teravoz 
      * webhook events, so you can use this code to identify the call.
      * 
-     * If the call ID isn't manual provided, then it will be generated automatically and will also
-     * be used in the webhook events as code.
+     * If the call ID isn't manual provided, then it will be generated automatically, but 
+     * the code field will NOT be present on teravoz webhooks
      */
     webRTCHandler.dial($('#exten').val(), callbacks, generatedCallId);
   }
