@@ -15,7 +15,7 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/teravoz/webphone-sample#readme",
   "devDependencies": {
-    "http-server": "^0.11.1",
+    "http-server": "^0.11.2",
     "sass": "^1.14.3"
   },
   "dependencies": {}
